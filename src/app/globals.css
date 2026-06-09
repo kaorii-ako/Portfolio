@@ -23,3 +23,18 @@ body { font-family: var(--font-display); background: var(--bg); color: var(--tex
 ::-webkit-scrollbar-track { background: #0D0907; }
 ::-webkit-scrollbar-thumb { background: rgba(249,115,22,0.3); border-radius: 2px; }
 ::selection { background: rgba(249,115,22,0.3); color: var(--text-primary); }
+
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+.marquee-left  { animation: marquee-left  32s linear infinite; }
+.marquee-right { animation: marquee-right 28s linear infinite; }
+
+.marquee-left:hover,
+.marquee-right:hover { animation-play-state: paused; }

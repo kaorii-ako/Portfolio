@@ -73,7 +73,7 @@ export default function Academic() {
           fontFamily: 'var(--font-mono)', fontSize: 11,
           letterSpacing: '0.3em', color: '#F97316', textTransform: 'uppercase' as const,
         }}>
-          04 / Academic
+          05 / Academic
         </span>
       </motion.div>
       <motion.h2

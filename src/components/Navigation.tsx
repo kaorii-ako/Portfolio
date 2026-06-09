@@ -7,6 +7,7 @@ const LINKS = [
   { label: 'About', href: '#about' },
   { label: 'Projects', href: '#projects' },
   { label: 'Motion.build', href: '#motion' },
+  { label: 'Connect', href: '#connect' },
   { label: 'Contact', href: '#academic' },
 ]
 
