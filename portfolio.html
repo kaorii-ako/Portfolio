@@ -1,0 +1,1136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kao — Tawin Tangsukson</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://esm.sh/react@18.3.1",
+      "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+      "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+      "framer-motion": "https://esm.sh/framer-motion@11.3.21",
+      "three": "https://esm.sh/three@0.167.1"
+    }
+  }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #070503;
+      --orange: #F97316;
+      --amber: #FBBF24;
+      --text-primary: #F5EFE6;
+      --text-secondary: #9B8B76;
+      --text-muted: #5C4F42;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-display); background: var(--bg); color: var(--text-primary); overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #0D0907; }
+    ::-webkit-scrollbar-thumb { background: rgba(249,115,22,0.3); border-radius: 2px; }
+    ::selection { background: rgba(249,115,22,0.3); color: var(--text-primary); }
+    @media (max-width: 768px) {
+      .two-col-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel" data-type="module">
+    import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
+    import { createRoot } from 'react-dom/client'
+    import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'framer-motion'
+    import * as THREE from 'three'
+
+    // ================================================================
+    // SECTION 1: Scene3D + Navigation + Hero
+    // ================================================================
+    function Scene3D() {
+      const mountRef = React.useRef(null);
+
+      React.useEffect(() => {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 6;
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0);
+        mountRef.current.appendChild(renderer.domElement);
+        renderer.domElement.style = 'position:absolute;top:0;left:0;width:100%;height:100%';
+
+        // Particles
+        const geo = new THREE.BufferGeometry();
+        const positions = new Float32Array(9000);
+        for (let i = 0; i < 3000; i++) {
+          const radius = 4 + Math.random() * 8;
+          const theta = Math.random() * Math.PI * 2;
+          const phi = Math.acos(2 * Math.random() - 1);
+          positions[i * 3]     = radius * Math.sin(phi) * Math.cos(theta);
+          positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+          positions[i * 3 + 2] = radius * Math.cos(phi);
+        }
+        geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particles = new THREE.Points(geo, new THREE.PointsMaterial({
+          color: 0xF97316,
+          size: 0.025,
+          transparent: true,
+          opacity: 0.55
+        }));
+        scene.add(particles);
+
+        // Torus Knot
+        const mat = new THREE.MeshStandardMaterial({
+          color: 0xF97316,
+          emissive: 0x7C3A10,
+          emissiveIntensity: 0.4,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.3
+        });
+        const torusKnot = new THREE.Mesh(new THREE.TorusKnotGeometry(1, 0.3, 128, 16), mat);
+        torusKnot.position.set(2, 0, -2);
+        scene.add(torusKnot);
+
+        // Icosahedron
+        const mat2 = new THREE.MeshStandardMaterial({
+          color: 0xFBBF24,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.22
+        });
+        const icosa = new THREE.Mesh(new THREE.IcosahedronGeometry(0.8, 1), mat2);
+        icosa.position.set(-2.5, 0.5, -1);
+        scene.add(icosa);
+
+        // Ring
+        const mat3 = new THREE.MeshStandardMaterial({
+          color: 0xF97316,
+          emissive: 0xF97316,
+          emissiveIntensity: 0.6,
+          transparent: true,
+          opacity: 0.4
+        });
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.04, 16, 60), mat3);
+        ring.position.set(0, -1.5, -3);
+        ring.rotation.x = Math.PI / 4;
+        scene.add(ring);
+
+        // Lights
+        scene.add(new THREE.AmbientLight(0xffffff, 0.15));
+        const pointLight1 = new THREE.PointLight(0xF97316, 1.0);
+        pointLight1.position.set(5, 5, 5);
+        scene.add(pointLight1);
+        const pointLight2 = new THREE.PointLight(0xFBBF24, 0.5);
+        pointLight2.position.set(-5, -3, -5);
+        scene.add(pointLight2);
+
+        // Animate
+        const clock = new THREE.Clock();
+        let frameId;
+        const tick = () => {
+          frameId = requestAnimationFrame(tick);
+          const t = clock.getElapsedTime();
+          particles.rotation.y = t * 0.04;
+          particles.rotation.x = Math.sin(t * 0.02) * 0.1;
+          torusKnot.rotation.x = t * 0.3;
+          torusKnot.rotation.y = t * 0.2;
+          torusKnot.position.y = Math.sin(t * 0.5) * 0.3;
+          icosa.rotation.x = t * 0.15;
+          icosa.rotation.z = t * 0.25;
+          icosa.position.y = Math.sin(t * 0.4 + 1) * 0.4;
+          ring.rotation.x = Math.PI / 4 + t * 0.2;
+          ring.rotation.y = t * 0.08;
+          renderer.render(scene, camera);
+        };
+        tick();
+
+        // Resize
+        const onResize = () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        };
+        window.addEventListener('resize', onResize);
+
+        return () => {
+          cancelAnimationFrame(frameId);
+          window.removeEventListener('resize', onResize);
+          renderer.dispose();
+          if (mountRef.current) mountRef.current.removeChild(renderer.domElement);
+        };
+      }, []);
+
+      return (
+        <div
+          ref={mountRef}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 0,
+            pointerEvents: 'none',
+            overflow: 'hidden'
+          }}
+        />
+      );
+    }
+
+    function Navigation() {
+      const [visible, setVisible] = React.useState(false);
+      const [activeSection, setActiveSection] = React.useState('');
+
+      React.useEffect(() => {
+        const onScroll = () => setVisible(window.scrollY > 80);
+        window.addEventListener('scroll', onScroll);
+        return () => window.removeEventListener('scroll', onScroll);
+      }, []);
+
+      React.useEffect(() => {
+        const sectionIds = ['#about', '#projects', '#motion', '#academic'];
+        const elements = sectionIds.map(id => document.querySelector(id)).filter(Boolean);
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                setActiveSection('#' + entry.target.id);
+              }
+            });
+          },
+          { threshold: 0.5 }
+        );
+        elements.forEach(el => observer.observe(el));
+        return () => observer.disconnect();
+      }, []);
+
+      const linkStyle = {
+        fontFamily: 'var(--font-display)',
+        fontSize: 13,
+        fontWeight: 500,
+        textDecoration: 'none',
+        padding: '6px 14px',
+        borderRadius: 20,
+        transition: 'all 0.2s',
+        letterSpacing: '0.02em',
+        cursor: 'pointer'
+      };
+
+      return (
+        <AnimatePresence>
+          {visible && (
+            <motion.nav
+              initial={{ y: -60, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -60, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 30 }}
+              style={{
+                position: 'fixed',
+                top: 20,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 100,
+                background: 'rgba(7,5,3,0.75)',
+                backdropFilter: 'blur(24px) saturate(150%)',
+                border: '1px solid rgba(249,115,22,0.22)',
+                borderRadius: 40,
+                padding: '12px 28px',
+                display: 'flex',
+                gap: 8,
+                alignItems: 'center',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              <span style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 13,
+                color: '#F97316',
+                marginRight: 16,
+                letterSpacing: '0.05em',
+                fontWeight: 500
+              }}>KAO</span>
+              {[['About', '#about'], ['Projects', '#projects'], ['Motion.build', '#motion'], ['Academic', '#academic']].map(([label, href]) => (
+                <a
+                  key={href}
+                  href={href}
+                  style={{
+                    ...linkStyle,
+                    color: activeSection === href ? '#F97316' : '#9B8B76',
+                    background: activeSection === href ? 'rgba(249,115,22,0.12)' : 'transparent'
+                  }}
+                >
+                  {label}
+                </a>
+              ))}
+            </motion.nav>
+          )}
+        </AnimatePresence>
+      );
+    }
+
+    function Hero() {
+      const sectionRef = React.useRef(null);
+
+      React.useEffect(() => {
+        const onMouseMove = (e) => {
+          if (sectionRef.current) {
+            sectionRef.current.style.setProperty('--mx', (e.clientX / window.innerWidth - 0.5) + '');
+            sectionRef.current.style.setProperty('--my', (e.clientY / window.innerHeight - 0.5) + '');
+          }
+        };
+        window.addEventListener('mousemove', onMouseMove);
+        return () => window.removeEventListener('mousemove', onMouseMove);
+      }, []);
+
+      const containerVariants = {
+        hidden: {},
+        show: {
+          transition: {
+            staggerChildren: 0.12,
+            delayChildren: 0.3
+          }
+        }
+      };
+
+      const itemVariants = {
+        hidden: { opacity: 0, y: 30 },
+        show: {
+          opacity: 1,
+          y: 0,
+          transition: {
+            ease: [0.25, 0.1, 0.25, 1],
+            duration: 0.8
+          }
+        }
+      };
+
+      const pills = ['Student Developer', 'AI Builder', 'Game Tester @ Motion.build'];
+
+      return (
+        <section
+          ref={sectionRef}
+          style={{
+            minHeight: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            overflow: 'hidden',
+            zIndex: 1
+          }}
+        >
+          {/* Glow Orb 1 */}
+          <div style={{
+            top: '10%',
+            left: '60%',
+            width: 600,
+            height: 600,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(249,115,22,0.08) 0%, transparent 70%)',
+            filter: 'blur(80px)',
+            position: 'absolute',
+            pointerEvents: 'none'
+          }} />
+          {/* Glow Orb 2 */}
+          <div style={{
+            bottom: '20%',
+            left: '5%',
+            width: 400,
+            height: 400,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(251,191,36,0.06) 0%, transparent 70%)',
+            filter: 'blur(80px)',
+            position: 'absolute',
+            pointerEvents: 'none'
+          }} />
+
+          {/* Content */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            style={{
+              textAlign: 'center',
+              position: 'relative',
+              zIndex: 2,
+              padding: '0 24px',
+              maxWidth: 900
+            }}
+          >
+            {/* Badge */}
+            <motion.div variants={itemVariants}>
+              <span style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 12,
+                letterSpacing: '0.3em',
+                color: '#F97316',
+                textTransform: 'uppercase',
+                background: 'rgba(249,115,22,0.08)',
+                border: '1px solid rgba(249,115,22,0.2)',
+                padding: '6px 16px',
+                borderRadius: 20,
+                display: 'inline-block'
+              }}>
+                Portfolio · 2025
+              </span>
+            </motion.div>
+
+            {/* Name */}
+            <motion.div variants={itemVariants}>
+              <h1 style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 'clamp(72px,14vw,180px)',
+                fontWeight: 700,
+                letterSpacing: '-0.04em',
+                lineHeight: 0.9,
+                background: 'linear-gradient(135deg,#F5EFE6 0%,#F97316 50%,#FBBF24 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                filter: 'drop-shadow(0 0 60px rgba(249,115,22,0.3))',
+                marginBottom: 8,
+                margin: '16px 0 8px'
+              }}>
+                KAO
+              </h1>
+            </motion.div>
+
+            {/* Subtitle */}
+            <motion.div variants={itemVariants}>
+              <p style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 'clamp(13px,1.5vw,16px)',
+                color: 'var(--text-secondary)',
+                letterSpacing: '0.15em',
+                marginBottom: 40
+              }}>
+                TAWIN TANGSUKSON
+              </p>
+            </motion.div>
+
+            {/* Pills */}
+            <motion.div
+              variants={itemVariants}
+              style={{
+                display: 'flex',
+                gap: 12,
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                marginBottom: 56
+              }}
+            >
+              {pills.map((pill, i) => {
+                const isLast = i === pills.length - 1;
+                return (
+                  <motion.span
+                    key={pill}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 1.2 + i * 0.15, ease: [0.25, 0.1, 0.25, 1], duration: 0.5 }}
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: 13,
+                      fontWeight: 500,
+                      padding: '8px 20px',
+                      borderRadius: 24,
+                      color: isLast ? '#F97316' : 'var(--text-secondary)',
+                      background: isLast ? 'rgba(249,115,22,0.1)' : 'rgba(255,255,255,0.04)',
+                      border: isLast ? '1px solid rgba(249,115,22,0.3)' : '1px solid rgba(255,255,255,0.08)',
+                      display: 'inline-block'
+                    }}
+                  >
+                    {pill}
+                  </motion.span>
+                );
+              })}
+            </motion.div>
+
+            {/* Buttons */}
+            <motion.div
+              variants={itemVariants}
+              style={{
+                display: 'flex',
+                gap: 16,
+                justifyContent: 'center',
+                flexWrap: 'wrap'
+              }}
+            >
+              <motion.a
+                href="#projects"
+                whileHover={{ scale: 1.04, boxShadow: '0 0 40px rgba(249,115,22,0.4)' }}
+                whileTap={{ scale: 0.97 }}
+                style={{
+                  background: 'linear-gradient(135deg,#F97316,#FBBF24)',
+                  color: '#0A0603',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 600,
+                  fontSize: 14,
+                  padding: '14px 36px',
+                  borderRadius: 28,
+                  textDecoration: 'none',
+                  letterSpacing: '0.04em',
+                  cursor: 'pointer',
+                  display: 'inline-block'
+                }}
+              >
+                View Projects
+              </motion.a>
+              <motion.a
+                href="https://github.com/kaorii-ako"
+                target="_blank"
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  color: 'var(--text-primary)',
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 500,
+                  fontSize: 14,
+                  padding: '14px 36px',
+                  borderRadius: 28,
+                  textDecoration: 'none',
+                  letterSpacing: '0.04em',
+                  cursor: 'pointer',
+                  display: 'inline-block'
+                }}
+              >
+                GitHub ↗
+              </motion.a>
+            </motion.div>
+          </motion.div>
+
+          {/* Scroll Indicator */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.5, duration: 0.8 }}
+            style={{
+              position: 'absolute',
+              bottom: 40,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 8
+            }}
+          >
+            <span style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 10,
+              color: 'var(--text-muted)',
+              letterSpacing: '0.2em'
+            }}>SCROLL</span>
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
+              style={{
+                width: 1,
+                height: 40,
+                background: 'linear-gradient(to bottom, #F97316, transparent)'
+              }}
+            />
+          </motion.div>
+        </section>
+      );
+    }
+
+    // ================================================================
+    // SECTION 2: About + Projects
+    // ================================================================
+    function About() {
+      const ref = useRef(null)
+      const inView = useInView(ref, { once: true, margin: '-100px' })
+
+      const techs = ['TypeScript','React','Node.js','Python','Gemini AI','Claude API','Supabase','Three.js','Framer Motion','Vite']
+
+      function SkillBar({ label, level, delay }) {
+        const barRef = useRef(null)
+        const barInView = useInView(barRef, { once: true, margin: '-50px' })
+        return (
+          React.createElement('div', { ref: barRef, style: { marginBottom: 20 } },
+            React.createElement('div', { style: { display:'flex', justifyContent:'space-between', marginBottom:8 } },
+              React.createElement('span', { style: { fontFamily:'var(--font-mono)', fontSize:12, color:'var(--text-secondary)', letterSpacing:'0.05em' } }, label),
+              React.createElement('span', { style: { fontFamily:'var(--font-mono)', fontSize:12, color:'#F97316' } }, level + '%')
+            ),
+            React.createElement('div', { style: { height:2, background:'rgba(255,255,255,0.06)', borderRadius:2, overflow:'hidden' } },
+              React.createElement(motion.div, {
+                initial: { width: 0 },
+                animate: barInView ? { width: level + '%' } : { width: 0 },
+                transition: { duration: 1.2, delay, ease: [0.25, 0.1, 0.25, 1] },
+                style: { height:'100%', background:'linear-gradient(90deg,#F97316,#FBBF24)', borderRadius:2 }
+              })
+            )
+          )
+        )
+      }
+
+      return React.createElement('section', {
+        ref,
+        id: 'about',
+        style: { position:'relative', zIndex:1, padding:'120px 24px' }
+      },
+        React.createElement('div', { style: { maxWidth:1100, margin:'0 auto' } },
+          React.createElement(motion.div, {
+            initial: { opacity:0, x:-20 },
+            animate: inView ? { opacity:1, x:0 } : {},
+            transition: { duration:0.6, ease:[0.25,0.1,0.25,1] },
+            style: { marginBottom:64 }
+          },
+            React.createElement('span', {
+              style: { fontFamily:'var(--font-mono)', fontSize:11, letterSpacing:'0.3em', color:'#F97316', textTransform:'uppercase' }
+            }, '01 / About')
+          ),
+          React.createElement('div', {
+            style: { display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(300px,1fr))', gap:80, alignItems:'start' }
+          },
+            React.createElement(motion.div, {
+              initial: { opacity:0, y:40 },
+              animate: inView ? { opacity:1, y:0 } : {},
+              transition: { duration:0.8, delay:0.2, ease:[0.25,0.1,0.25,1] }
+            },
+              React.createElement('h2', {
+                style: { fontSize:'clamp(36px,4vw,52px)', fontWeight:700, fontFamily:'var(--font-display)', letterSpacing:'-0.03em', lineHeight:1.1, marginBottom:28, color:'var(--text-primary)' }
+              },
+                'Building things',
+                React.createElement('br', null),
+                React.createElement('span', { style: { color:'#F97316' } }, 'that matter')
+              ),
+              React.createElement('p', {
+                style: { fontSize:16, lineHeight:1.8, color:'var(--text-secondary)', fontFamily:'var(--font-display)', marginBottom:16 }
+              }, "I'm Tawin — a student developer from Thailand focused on AI-powered tools and real-world applications. I believe software should solve genuine problems, not just demonstrate technical skill."),
+              React.createElement('p', {
+                style: { fontSize:16, lineHeight:1.8, color:'var(--text-secondary)', fontFamily:'var(--font-display)' }
+              }, 'Currently exploring LLMs, edge inference, and building open-source tools. Also testing and evaluating motion design experiences at Motion.build.'),
+              React.createElement('div', {
+                style: { display:'flex', flexWrap:'wrap', gap:8, marginTop:24 }
+              },
+                techs.map((tech, i) =>
+                  React.createElement(motion.span, {
+                    key: tech,
+                    initial: { opacity:0, scale:0.8 },
+                    animate: inView ? { opacity:1, scale:1 } : {},
+                    transition: { duration:0.4, delay:0.4 + i * 0.06, ease:[0.25,0.1,0.25,1] },
+                    style: {
+                      fontFamily:'var(--font-mono)', fontSize:11, color:'var(--text-secondary)',
+                      background:'rgba(249,115,22,0.06)', border:'1px solid rgba(249,115,22,0.12)',
+                      padding:'5px 12px', borderRadius:12, letterSpacing:'0.04em'
+                    }
+                  }, tech)
+                )
+              )
+            ),
+            React.createElement(motion.div, {
+              initial: { opacity:0, y:40 },
+              animate: inView ? { opacity:1, y:0 } : {},
+              transition: { duration:0.8, delay:0.35, ease:[0.25,0.1,0.25,1] }
+            },
+              React.createElement('div', {
+                style: { fontFamily:'var(--font-mono)', fontSize:11, color:'var(--text-muted)', letterSpacing:'0.2em', textTransform:'uppercase', marginBottom:32 }
+              }, 'Proficiency'),
+              ...[
+                ['JavaScript / TypeScript', 88, 0],
+                ['React / Next.js', 82, 0.1],
+                ['AI & Machine Learning', 78, 0.2],
+                ['Python', 75, 0.3],
+                ['Node.js / Backend', 70, 0.4],
+                ['Game Testing / QA', 85, 0.5],
+              ].map(([l, v, d]) => React.createElement(SkillBar, { key: l, label: l, level: v, delay: d + 0.4 })),
+              React.createElement('div', {
+                style: {
+                  display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:0,
+                  background:'rgba(249,115,22,0.06)', border:'1px solid rgba(249,115,22,0.12)',
+                  borderRadius:16, overflow:'hidden', marginTop:48
+                }
+              },
+                [
+                  ['3+', 'Open Source\nProjects'],
+                  ['43★', 'Stars on\nGitHub'],
+                  ['TH', 'Based in\nThailand'],
+                ].map(([value, label], i) =>
+                  React.createElement('div', {
+                    key: value,
+                    style: {
+                      padding:'24px 16px', textAlign:'center',
+                      borderRight: i < 2 ? '1px solid rgba(249,115,22,0.08)' : 'none'
+                    }
+                  },
+                    React.createElement('div', {
+                      style: { fontFamily:'var(--font-display)', fontSize:28, fontWeight:700, color:'#F97316', marginBottom:4 }
+                    }, value),
+                    React.createElement('div', {
+                      style: { fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-muted)', lineHeight:1.5, letterSpacing:'0.05em', whiteSpace:'pre-line' }
+                    }, label)
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    }
+
+    function Projects() {
+      const ref = useRef(null)
+      const inView = useInView(ref, { once: true, margin: '-80px' })
+
+      const projects = [
+        {
+          id:'shiori', name:'Shiori', tagline:'AI Study Companion', stars:43, forks:2,
+          color:'#F97316', accent:'rgba(249,115,22,0.15)', border:'rgba(249,115,22,0.25)',
+          tech:['JavaScript','Gemini AI','MCP','SRS','Google Classroom API'],
+          href:'https://github.com/kaorii-ako/Shiori-v1',
+          desc:'Open-source AI study companion with Google Classroom sync, Gemini AI study plans, spaced-repetition flashcards, GPA predictor, AI quiz generation, and an MCP server for Claude Code.'
+        },
+        {
+          id:'chronicly', name:'Chronicly', tagline:'Health Tracker', stars:3, forks:0,
+          color:'#FBBF24', accent:'rgba(251,191,36,0.1)', border:'rgba(251,191,36,0.2)',
+          tech:['TypeScript','React','Supabase','Charts'],
+          href:'https://github.com/kaorii-ako/chronicly',
+          desc:'Open-source health tracker for chronic illness management. Log symptoms, medications, appointments, and identify trends over time.'
+        },
+        {
+          id:'macchanu', name:'Macchanu', tagline:'STEM Racing Team Site', stars:0, forks:0,
+          color:'#94A3B8', accent:'rgba(148,163,184,0.08)', border:'rgba(148,163,184,0.15)',
+          tech:['JavaScript','HTML','CSS'],
+          href:'https://github.com/kaorii-ako/macchanu',
+          desc:'Official website for a STEM racing team. Clean, performance-focused frontend showcasing team, events, and achievements.'
+        },
+      ]
+
+      function TiltCard({ project, delay }) {
+        const cardRef = useRef(null)
+        const cardInView = useInView(cardRef, { once: true, margin: '-80px' })
+        const [tilt, setTilt] = useState({ x: 0, y: 0 })
+        const [hovered, setHovered] = useState(false)
+
+        const handleMouseMove = (e) => {
+          const rect = e.currentTarget.getBoundingClientRect()
+          const x = ((e.clientY - rect.top) / rect.height - 0.5) * 12
+          const y = ((e.clientX - rect.left) / rect.width - 0.5) * -12
+          setTilt({ x, y })
+        }
+
+        return React.createElement(motion.div, {
+          ref: cardRef,
+          initial: { opacity:0, y:60 },
+          animate: cardInView ? { opacity:1, y:0 } : {},
+          transition: { duration:0.8, delay, ease:[0.25,0.1,0.25,1] },
+          onMouseMove: handleMouseMove,
+          onMouseEnter: () => setHovered(true),
+          onMouseLeave: () => { setTilt({ x:0, y:0 }); setHovered(false) },
+          style: { perspective:1000, cursor:'pointer' }
+        },
+          React.createElement(motion.div, {
+            animate: { rotateX:tilt.x, rotateY:tilt.y, scale: hovered ? 1.02 : 1 },
+            transition: { type:'spring', stiffness:300, damping:30 },
+            style: {
+              background:'rgba(7,5,3,0.8)',
+              border: `1px solid ${hovered ? project.border : 'rgba(255,255,255,0.07)'}`,
+              borderRadius:24, padding:36, position:'relative', overflow:'hidden',
+              backdropFilter:'blur(20px)',
+              boxShadow: hovered ? `0 30px 80px rgba(0,0,0,0.5), inset 0 1px 0 ${project.accent}` : 'none',
+              transition:'border-color 0.3s ease, box-shadow 0.3s ease',
+              transformStyle:'preserve-3d'
+            }
+          },
+            React.createElement(motion.div, {
+              animate: { opacity: hovered ? 1 : 0 },
+              transition: { duration:0.3 },
+              style: {
+                position:'absolute', inset:0,
+                background: `radial-gradient(circle at 50% 0%, ${project.accent} 0%, transparent 70%)`,
+                pointerEvents:'none'
+              }
+            }),
+            React.createElement('div', {
+              style: { display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:20 }
+            },
+              React.createElement('div', null,
+                React.createElement('h3', {
+                  style: { fontFamily:'var(--font-display)', fontSize:24, fontWeight:700, color:'var(--text-primary)', letterSpacing:'-0.02em', marginBottom:4 }
+                }, project.name),
+                React.createElement('span', {
+                  style: { fontFamily:'var(--font-mono)', fontSize:11, color:project.color, letterSpacing:'0.1em', textTransform:'uppercase' }
+                }, project.tagline)
+              ),
+              project.stars > 0 && React.createElement('div', {
+                style: {
+                  display:'flex', alignItems:'center', gap:6,
+                  background:project.accent, border:`1px solid ${project.border}`,
+                  borderRadius:20, padding:'6px 12px'
+                }
+              },
+                React.createElement('span', { style: { fontSize:12, color:project.color } }, '★'),
+                React.createElement('span', { style: { fontFamily:'var(--font-mono)', fontSize:12, color:project.color } }, project.stars)
+              )
+            ),
+            React.createElement('p', {
+              style: { fontFamily:'var(--font-display)', fontSize:14, lineHeight:1.7, color:'var(--text-secondary)', marginBottom:28 }
+            }, project.desc),
+            React.createElement('div', {
+              style: { display:'flex', flexWrap:'wrap', gap:6, marginBottom:28 }
+            },
+              project.tech.map(t =>
+                React.createElement('span', {
+                  key: t,
+                  style: {
+                    fontFamily:'var(--font-mono)', fontSize:10, color:'var(--text-muted)',
+                    background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.07)',
+                    padding:'4px 10px', borderRadius:8, letterSpacing:'0.05em'
+                  }
+                }, t)
+              )
+            ),
+            React.createElement('a', {
+              href: project.href,
+              target: '_blank',
+              rel: 'noopener noreferrer',
+              style: {
+                fontFamily:'var(--font-mono)', fontSize:12, color:project.color,
+                textDecoration:'none', display:'inline-flex', alignItems:'center', gap:6, letterSpacing:'0.05em'
+              }
+            }, 'View on GitHub →')
+          )
+        )
+      }
+
+      return React.createElement('section', {
+        ref,
+        id: 'projects',
+        style: { position:'relative', zIndex:1, padding:'120px 24px' }
+      },
+        React.createElement('div', { style: { maxWidth:1100, margin:'0 auto' } },
+          React.createElement(motion.div, {
+            initial: { opacity:0, x:-20 },
+            animate: inView ? { opacity:1, x:0 } : {},
+            transition: { duration:0.6, ease:[0.25,0.1,0.25,1] },
+            style: { marginBottom:16 }
+          },
+            React.createElement('span', {
+              style: { fontFamily:'var(--font-mono)', fontSize:11, letterSpacing:'0.3em', color:'#F97316', textTransform:'uppercase' }
+            }, "02 / Projects")
+          ),
+          React.createElement(motion.h2, {
+            initial: { opacity:0, y:30 },
+            animate: inView ? { opacity:1, y:0 } : {},
+            transition: { duration:0.8, delay:0.1, ease:[0.25,0.1,0.25,1] },
+            style: {
+              fontSize:'clamp(36px,4vw,52px)', fontWeight:700, fontFamily:'var(--font-display)',
+              letterSpacing:'-0.03em', lineHeight:1.1, color:'var(--text-primary)', marginBottom:64
+            }
+          }, "Things I've built"),
+          React.createElement('div', {
+            style: { display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(320px,1fr))', gap:24 }
+          },
+            projects.map((p, i) =>
+              React.createElement(TiltCard, { key: p.id, project: p, delay: 0.2 + i * 0.15 })
+            )
+          )
+        )
+      )
+    }
+
+    // ================================================================
+    // SECTION 3: MotionBuild + Academic
+    // ================================================================
+    function MotionBuild() {
+      const ref = React.useRef(null);
+      const inView = motion.useInView(ref, { once: true, margin: '-80px' });
+
+      function OrbitVisual() {
+        return (
+          <div style={{ position: 'relative', width: 280, height: 280, flexShrink: 0 }}>
+            <motion.div
+              animate={{ scale: [1, 1.06, 1] }}
+              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+              style={{
+                position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+                width: 80, height: 80, borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(249,115,22,0.8) 0%, rgba(249,115,22,0.2) 60%, transparent 100%)',
+                boxShadow: '0 0 40px rgba(249,115,22,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#fff', letterSpacing: '0.05em', fontWeight: 500 }}>MB</span>
+            </motion.div>
+            {[
+              { r: 100, duration: 6, dir: 1, color: 'rgba(249,115,22,0.3)', dotColor: '#F97316' },
+              { r: 140, duration: 9, dir: -1, color: 'rgba(249,115,22,0.2)', dotColor: '#FBBF24' },
+              { r: 180, duration: 14, dir: 1, color: 'rgba(249,115,22,0.12)', dotColor: 'rgba(249,115,22,0.6)' },
+            ].map(({ r, duration, dir, color, dotColor }, i) => (
+              <motion.div key={i}
+                animate={{ rotate: 360 * dir }}
+                transition={{ repeat: Infinity, duration, ease: 'linear' }}
+                style={{
+                  position: 'absolute', top: '50%', left: '50%',
+                  width: r * 2, height: r * 2, marginLeft: -r, marginTop: -r,
+                  borderRadius: '50%', border: `1px solid ${color}`
+                }}>
+                <div style={{
+                  position: 'absolute', top: -4, left: '50%', transform: 'translateX(-50%)',
+                  width: 8, height: 8, borderRadius: '50%', background: dotColor,
+                  boxShadow: `0 0 10px ${dotColor}`
+                }} />
+              </motion.div>
+            ))}
+          </div>
+        );
+      }
+
+      return (
+        <section id="motion" style={{ position: 'relative', zIndex: 1, padding: '120px 24px', overflow: 'hidden' }}>
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(249,115,22,0.04) 0%, transparent 70%)',
+            pointerEvents: 'none'
+          }} />
+          <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+            <p style={{
+              fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)',
+              letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 48
+            }}>03 / Experience</p>
+            <div ref={ref} style={{
+              display: 'grid', gridTemplateColumns: '1fr auto', gap: 80, alignItems: 'center'
+            }}>
+              <motion.div
+                initial={{ opacity: 0, x: -40 }}
+                animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }}
+                transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}>
+                <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 24 }}>
+                  <h2 style={{
+                    fontFamily: 'var(--font-display)', fontSize: 'clamp(36px,4vw,52px)',
+                    fontWeight: 700, letterSpacing: '-0.03em', color: 'var(--text-primary)', margin: 0
+                  }}>Motion.build</h2>
+                  <span style={{
+                    fontFamily: 'var(--font-mono)', fontSize: 11, color: '#22C55E',
+                    background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)',
+                    padding: '4px 12px', borderRadius: 12, letterSpacing: '0.1em', flexShrink: 0
+                  }}>ACTIVE</span>
+                </div>
+                <p style={{
+                  fontFamily: 'var(--font-mono)', fontSize: 13, color: '#F97316',
+                  letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 20, margin: '0 0 20px 0'
+                }}>Game Tester</p>
+                <p style={{
+                  fontSize: 16, lineHeight: 1.8, color: 'var(--text-secondary)',
+                  marginBottom: 36, maxWidth: 560, margin: '0 0 36px 0'
+                }}>
+                  Involved in quality assurance and gameplay testing at Motion.build — evaluating motion design accuracy, animation fidelity, and the overall feel of interactive experiences.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {[
+                    'Evaluate motion design quality and animation principles',
+                    'Test interaction feel, timing, and easing accuracy',
+                    'Provide detailed QA feedback on Framer-based animations',
+                    'Assess user experience in motion-heavy interfaces',
+                    'Document animation bugs and visual inconsistencies',
+                  ].map((point, i) => (
+                    <div key={i} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                      <div style={{
+                        width: 6, height: 6, borderRadius: '50%', background: '#F97316',
+                        marginTop: 6, flexShrink: 0, boxShadow: '0 0 8px rgba(249,115,22,0.8)'
+                      }} />
+                      <span style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{point}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+              <OrbitVisual />
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Academic() {
+      const ref = React.useRef(null);
+      const inView = motion.useInView(ref, { once: true, margin: '-80px' });
+
+      const selfStudyItems = [
+        ['Large Language Models', 'Prompt engineering, fine-tuning, tool use, MCP servers'],
+        ['Edge Inference', 'Deploying small models on-device, latency optimization'],
+        ['Full-Stack Development', 'React, Node.js, Supabase, API design'],
+        ['Motion & Animation', 'Framer Motion, Three.js, animation principles'],
+      ];
+
+      return (
+        <section id="academic" style={{ position: 'relative', zIndex: 1, padding: '120px 24px 160px', maxWidth: 1100, margin: '0 auto' }}>
+          <div ref={ref}>
+            <p style={{
+              fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)',
+              letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 20
+            }}>04 / Academic</p>
+            <h2 style={{
+              fontFamily: 'var(--font-display)', fontSize: 'clamp(36px,4vw,52px)',
+              fontWeight: 700, letterSpacing: '-0.03em', color: 'var(--text-primary)',
+              marginBottom: 64, lineHeight: 1.15
+            }}>
+              Education &<br />
+              <span style={{ color: '#F97316' }}>Self-Study</span>
+            </h2>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
+              <div>
+                <p style={{
+                  fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)',
+                  letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 24
+                }}>FORMAL</p>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                  transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  style={{
+                    background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(249,115,22,0.2)',
+                    borderRadius: 20, padding: 36, position: 'relative'
+                  }}>
+                  <div style={{
+                    position: 'absolute', top: 0, left: 0, right: 0, height: 1,
+                    background: 'linear-gradient(90deg,transparent,rgba(249,115,22,0.6),transparent)'
+                  }} />
+                  <div style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+                    flexWrap: 'wrap', gap: 12, marginBottom: 8
+                  }}>
+                    <h3 style={{
+                      fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700,
+                      color: 'var(--text-primary)', margin: 0
+                    }}>Amnuaysilpa School</h3>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <span style={{
+                        fontFamily: 'var(--font-mono)', fontSize: 10, color: '#22C55E',
+                        background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)',
+                        padding: '3px 10px', borderRadius: 10, letterSpacing: '0.1em'
+                      }}>CURRENT</span>
+                      <span style={{
+                        fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)'
+                      }}>2022 — Present</span>
+                    </div>
+                  </div>
+                  <p style={{
+                    fontFamily: 'var(--font-mono)', fontSize: 12, color: '#F97316',
+                    letterSpacing: '0.08em', marginBottom: 20, margin: '0 0 20px 0'
+                  }}>High School — STEM Track</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {[
+                      'Student developer exploring AI and machine learning',
+                      'Building real-world applications as independent projects',
+                      'Active in software development and technology communities',
+                    ].map((point, i) => (
+                      <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                        <span style={{ color: '#F97316', fontSize: 13, flexShrink: 0, marginTop: 1 }}>▸</span>
+                        <span style={{ fontFamily: 'var(--font-display)', fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{point}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+              <div>
+                <p style={{
+                  fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-muted)',
+                  letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 24
+                }}>SELF-DIRECTED</p>
+                <div style={{
+                  background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: 20, overflow: 'hidden'
+                }}>
+                  {selfStudyItems.map(([area, detail], i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+                      transition={{ duration: 0.5, delay: 0.1 + i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      style={{
+                        padding: '24px 28px',
+                        borderBottom: i < selfStudyItems.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none'
+                      }}>
+                      <p style={{
+                        fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 600,
+                        color: 'var(--text-primary)', marginBottom: 6, margin: '0 0 6px 0'
+                      }}>{area}</p>
+                      <p style={{
+                        fontFamily: 'var(--font-display)', fontSize: 13, color: 'var(--text-muted)',
+                        lineHeight: 1.5, margin: 0
+                      }}>{detail}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div style={{
+              marginTop: 120, borderTop: '1px solid rgba(255,255,255,0.06)',
+              paddingTop: 80, textAlign: 'center'
+            }}>
+              <h3 style={{
+                fontFamily: 'var(--font-display)', fontSize: 'clamp(28px,4vw,42px)',
+                fontWeight: 700, letterSpacing: '-0.03em', color: 'var(--text-primary)',
+                marginBottom: 16
+              }}>Let's build something</h3>
+              <p style={{
+                fontSize: 16, color: 'var(--text-secondary)', marginBottom: 40
+              }}>Open to collaborations, internships, and interesting problems.</p>
+              <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <motion.a
+                  href="https://github.com/kaorii-ako"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.05 }}
+                  style={{
+                    display: 'inline-block', padding: '14px 32px', borderRadius: 12,
+                    background: 'linear-gradient(135deg, #F97316, #FBBF24)',
+                    color: '#070503', fontFamily: 'var(--font-display)', fontSize: 15,
+                    fontWeight: 700, textDecoration: 'none', cursor: 'pointer'
+                  }}>
+                  GitHub ↗
+                </motion.a>
+                <motion.a
+                  href="mailto:79807@student.amnuaysilpa.ac.th"
+                  whileHover={{ scale: 1.05 }}
+                  style={{
+                    display: 'inline-block', padding: '14px 32px', borderRadius: 12,
+                    background: 'transparent', border: '1px solid rgba(255,255,255,0.25)',
+                    color: 'var(--text-primary)', fontFamily: 'var(--font-display)', fontSize: 15,
+                    fontWeight: 600, textDecoration: 'none', cursor: 'pointer'
+                  }}>
+                  Email
+                </motion.a>
+              </div>
+              <p style={{
+                fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)', marginTop: 64
+              }}>© 2025 Tawin Tangsukson — Built with React, Framer Motion & Three.js</p>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // ================================================================
+    // APP ROOT
+    // ================================================================
+    function App() {
+      return (
+        <>
+          <Scene3D />
+          <Navigation />
+          <main style={{ position: 'relative', zIndex: 1 }}>
+            <Hero />
+            <About />
+            <Projects />
+            <MotionBuild />
+            <Academic />
+          </main>
+        </>
+      )
+    }
+
+    createRoot(document.getElementById('root')).render(<App />)
+  </script>
+</body>
+</html>
