@@ -19,7 +19,7 @@ export default function Skills() {
       <div className="container">
         <motion.div
           className="mb-14 h-px w-full"
-          style={{ background: "linear-gradient(90deg, var(--accent), var(--purple), var(--accent))" }}
+          style={{ background: "var(--border)" }}
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true }}
@@ -43,7 +43,7 @@ export default function Skills() {
           transition={{ duration: 0.5, delay: 0.05 }}
         >
           <h2 className="heading-xl">
-            What I <span className="shimmer">use</span>
+            What I <span style={{ color: "var(--accent)" }}>use</span>
           </h2>
         </motion.div>
 

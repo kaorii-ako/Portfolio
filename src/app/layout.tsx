@@ -1,25 +1,49 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import { site } from "@/data/site";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import ScrollProgress from "@/components/ScrollProgress";
 import "./globals.css";
 
-const inter = Inter({
+const display = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-display",
+  variable: "--font-display-family",
+  display: "swap",
+  weight: ["500", "600", "700"],
+});
+
+const body = Inter({
+  subsets: ["latin"],
+  variable: "--font-body-family",
   display: "swap",
 });
 
 const mono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-mono-family",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: `${site.nick} — ${site.role}`,
+  title: {
+    default: `${site.nick} — ${site.role}`,
+    template: `%s — ${site.nick}`,
+  },
   description: site.tagline,
-  keywords: ["Tawin Tangsukson", "Tawin", "developer", "AI builder", "open source", "Bangkok", "portfolio"],
+  keywords: [
+    "Tawin Tangsukson",
+    "Kao",
+    "developer",
+    "F1 in Schools",
+    "aerodynamics",
+    "CFD",
+    "PCB design",
+    "AI builder",
+    "Bangkok",
+    "portfolio",
+  ],
   authors: [{ name: site.name }],
   openGraph: {
     title: `${site.name} — ${site.role}`,
@@ -37,9 +61,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${mono.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body className="antialiased">
+        <ScrollProgress />
+        <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );

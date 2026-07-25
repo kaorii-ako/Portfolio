@@ -6,9 +6,9 @@ import { Code, Zap, Rocket, Target } from "lucide-react";
 
 const timeline = [
   { year: "2022", title: "Started coding", desc: "First lines of Python at age 12.", icon: Code },
-  { year: "2023", title: "F1 in Schools", desc: "Joined Macchanu Racing. CAD, CFD simulations.", icon: Zap },
-  { year: "2024", title: "Axon OS", desc: "A Linux distro with a 7-agent AI mesh.", icon: Rocket },
-  { year: "2025", title: "Now", desc: "Year 10. 9 projects shipped. Still building.", icon: Target },
+  { year: "2023", title: "F1 in Schools", desc: "Joined Macchanu Racing as aero lead. CAD, CFD simulation, front-wing iteration.", icon: Zap },
+  { year: "2024", title: "Axon OS", desc: "Shipped a Linux distro with a 7-agent local AI mesh.", icon: Rocket },
+  { year: "2026", title: "Now", desc: "Year 10, Bangkok. Nine projects shipped across software, hardware, and aero. Still building.", icon: Target },
 ];
 
 export default function About() {
@@ -20,7 +20,7 @@ export default function About() {
       <div className="container">
         <motion.div
           className="mb-14 h-px w-full"
-          style={{ background: "linear-gradient(90deg, var(--accent), var(--purple), var(--accent))" }}
+          style={{ background: "var(--border)" }}
           initial={{ scaleX: 0 }}
           animate={isInView ? { scaleX: 1 } : {}}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -42,18 +42,18 @@ export default function About() {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="heading-xl">Tawin.</h2>
+              <h2 className="heading-xl">Kao.</h2>
             </motion.div>
 
             <div className="mt-8 space-y-4 text-sm sm:text-base" style={{ color: "var(--text-2)" }}>
               <motion.p initial={{ opacity: 0, y: 16 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.1 }}>
-                I do aerodynamics for a student F1 race car. CFD simulations in ANSYS Fluent to optimize front wing geometry at racing speeds.
+                I&apos;m the aero lead for Macchanu Racing, a student F1 in Schools team. I run CFD simulations in ANSYS Fluent to optimize front-wing and body geometry — every CAD revision gets checked against the sim before it&apos;s cut.
               </motion.p>
               <motion.p initial={{ opacity: 0, y: 16 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.2 }}>
-                I built my own Linux distro. Not a reskin — Axon OS has a 7-agent AI mesh running as systemd services, autonomously improving the OS while it runs.
+                I built my own Linux distro. Not a reskin — Axon OS runs a 7-agent AI mesh as systemd services, fully local, no cloud calls, improving the OS while it runs.
               </motion.p>
               <motion.p initial={{ opacity: 0, y: 16 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3 }}>
-                I&apos;m in Year 10. Bangkok. These aren&apos;t side projects. They&apos;re the main thing. Nine shipped. More coming.
+                I&apos;m in Year 10, Bangkok. None of this is a side project — it&apos;s the main thing. Nine shipped, more in progress, across software, hardware, and aero.
               </motion.p>
             </div>
 
@@ -79,7 +79,7 @@ export default function About() {
             >
               <div className="space-y-6">
                 <div className="border-t pt-4" style={{ borderColor: "var(--border)" }}>
-                  <span className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>Journey</span>
+                  <span className="mono-label">Journey</span>
                   <div className="mt-4 flex flex-col">
                     {timeline.map((item, i) => {
                       const Icon = item.icon;
@@ -99,7 +99,7 @@ export default function About() {
                           </div>
                           <div className="pb-5 flex-1">
                             <div className="flex items-center gap-2">
-                              <span className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>{item.year}</span>
+                              <span className="mono-label">{item.year}</span>
                               <Icon className="h-3 w-3" style={{ color: "var(--accent)" }} />
                             </div>
                             <h4 className="text-sm font-semibold mt-0.5" style={{ color: "var(--text-1)" }}>{item.title}</h4>
@@ -112,21 +112,19 @@ export default function About() {
                 </div>
 
                 <div className="border-t pt-4" style={{ borderColor: "var(--border)" }}>
-                  <span className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>Focus</span>
-                  <p className="mt-2 text-sm" style={{ color: "var(--text-1)" }}>Targeting CS at a top university</p>
+                  <span className="mono-label">Focus</span>
+                  <p className="mt-2 text-sm" style={{ color: "var(--text-1)" }}>Targeting computer science / engineering at a top university</p>
                 </div>
 
                 <div className="border-t pt-4" style={{ borderColor: "var(--border)" }}>
-                  <span className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>Interests</span>
+                  <span className="mono-label">Interests</span>
                   <p className="mt-2 text-sm" style={{ color: "var(--text-1)" }}>F1 in Schools, Taekwondo, Linux internals, PCB design</p>
                 </div>
 
                 <div className="border-t pt-4" style={{ borderColor: "var(--border)" }}>
-                  <span className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>Available</span>
+                  <span className="mono-label">Available</span>
                   <div className="mt-2 flex items-center gap-2">
-                    <span className="relative inline-block h-2 w-2 rounded-full" style={{ background: "var(--accent)", boxShadow: "0 0 8px var(--accent-glow)" }}>
-                      <span className="absolute inset-[-4px] rounded-full animate-ping" style={{ background: "var(--accent)", opacity: 0.4 }} />
-                    </span>
+                    <span className="status-dot" />
                     <span className="text-sm" style={{ color: "var(--text-1)" }}>For internships & collaborations</span>
                   </div>
                 </div>

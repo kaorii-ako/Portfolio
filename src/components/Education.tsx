@@ -29,7 +29,7 @@ export default function Education() {
       <div className="container">
         <motion.div
           className="mb-14 h-px w-full"
-          style={{ background: "linear-gradient(90deg, var(--accent), var(--purple), var(--accent))" }}
+          style={{ background: "var(--border)" }}
           initial={{ scaleX: 0 }}
           animate={isInView ? { scaleX: 1 } : {}}
           transition={{ duration: 0.7 }}
@@ -51,7 +51,7 @@ export default function Education() {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <h2 className="heading-xl">
-            Academic <span className="shimmer">track</span>
+            Academic <span style={{ color: "var(--accent)" }}>track</span>
           </h2>
         </motion.div>
 

@@ -19,7 +19,7 @@ export default function Contact() {
       <div className="container">
         <motion.div
           className="mb-14 h-px w-full"
-          style={{ background: "linear-gradient(90deg, var(--accent), var(--purple), var(--accent))" }}
+          style={{ background: "var(--border)" }}
           initial={{ scaleX: 0 }}
           animate={isInView ? { scaleX: 1 } : {}}
           transition={{ duration: 0.8 }}
@@ -97,12 +97,8 @@ export default function Contact() {
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <span className="relative inline-block h-2 w-2 rounded-full" style={{ background: "var(--accent)", boxShadow: "0 0 8px var(--accent-glow)" }}>
-            <span className="absolute inset-[-4px] rounded-full animate-ping" style={{ background: "var(--accent)", opacity: 0.4 }} />
-          </span>
-          <span className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>
-            Usually responds within 24h
-          </span>
+          <span className="status-dot" />
+          <span className="mono-label">Usually responds within 24h</span>
         </motion.div>
       </div>
     </section>

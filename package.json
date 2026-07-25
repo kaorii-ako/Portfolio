@@ -13,12 +13,16 @@
     "react": "^18",
     "react-dom": "^18",
     "framer-motion": "^11.3.21",
-    "lucide-react": "^0.441.0"
+    "lucide-react": "^0.441.0",
+    "three": "^0.169.0",
+    "@react-three/fiber": "^8.17.10",
+    "@react-three/drei": "^9.114.3"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/three": "^0.169.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.15",

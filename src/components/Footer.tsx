@@ -7,10 +7,10 @@ export default function Footer() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
-    <footer className="border-t py-10 relative" style={{ borderColor: "var(--border)" }}>
+    <footer className="relative border-t py-10" style={{ borderColor: "var(--border)" }}>
       <div
         className="absolute left-0 top-0 h-px w-full"
-        style={{ background: "linear-gradient(90deg, transparent, var(--accent), var(--purple), var(--accent), transparent)" }}
+        style={{ background: "linear-gradient(90deg, transparent, var(--accent), var(--accent-2), transparent)" }}
         aria-hidden
       />
       <div className="container">
@@ -18,7 +18,7 @@ export default function Footer() {
           <div className="flex items-center gap-2">
             <div
               className="grid h-7 w-7 place-items-center text-[10px] font-bold"
-              style={{ background: "var(--accent)", color: "var(--bg)", borderRadius: "var(--radius)" }}
+              style={{ background: "var(--accent)", color: "var(--bg)", borderRadius: "var(--radius)", fontFamily: "var(--font-display)" }}
             >
               {site.nick[0]}
             </div>
@@ -32,7 +32,7 @@ export default function Footer() {
             <a href={`mailto:${site.email}`} className="text-[10px] uppercase tracking-widest transition-colors hover:text-[var(--accent)]" style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>
               Email
             </a>
-            <button onClick={scrollToTop} className="text-[10px] uppercase tracking-widest transition-colors hover:text-[var(--accent)] cursor-pointer flex items-center gap-1" style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>
+            <button onClick={scrollToTop} className="flex cursor-pointer items-center gap-1 text-[10px] uppercase tracking-widest transition-colors hover:text-[var(--accent)]" style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)" }}>
               Top
               <ArrowUp className="h-3 w-3" />
             </button>
@@ -42,7 +42,7 @@ export default function Footer() {
         <div className="mt-6 h-px w-full" style={{ background: "var(--border)" }} />
 
         <div className="mt-4 text-center">
-          <p className="text-[9px] uppercase tracking-[0.3em]" style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)", opacity: 0.5 }}>
+          <p className="text-[9px] uppercase tracking-[0.3em]" style={{ fontFamily: "var(--font-mono)", color: "var(--text-3)", opacity: 0.6 }}>
             {site.name} · 2026
           </p>
         </div>

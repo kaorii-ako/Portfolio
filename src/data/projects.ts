@@ -1,4 +1,13 @@
-export type ProjectCategory = "AI" | "Web" | "Mobile" | "Desktop" | "Systems" | "Health" | "Learning";
+export type ProjectCategory =
+  | "AI"
+  | "Web"
+  | "Mobile"
+  | "Desktop"
+  | "Systems"
+  | "Health"
+  | "Learning"
+  | "Hardware"
+  | "Aero";
 
 export type Project = {
   title: string;
@@ -10,6 +19,12 @@ export type Project = {
   accentLabel: string;
   category: ProjectCategory;
   featured?: boolean;
+  /** Surfaced in the home page "proof" strip, in this priority order. */
+  proof?: boolean;
+  /** One concrete, checkable stat/fact shown in the proof strip. */
+  proofStat?: string;
+  /** Set false when copy/stats are placeholders pending real numbers — flags it for a content pass. */
+  verified?: boolean;
 };
 
 export const projects: Project[] = [
@@ -24,6 +39,9 @@ export const projects: Project[] = [
     accentLabel: "Flagship",
     category: "AI",
     featured: true,
+    proof: true,
+    proofStat: "Google Classroom sync · Gemini study plans · MCP server for Claude Code",
+    verified: true,
   },
   {
     title: "Axon OS",
@@ -35,6 +53,37 @@ export const projects: Project[] = [
     accentLabel: "Systems",
     category: "Systems",
     featured: true,
+    proof: true,
+    proofStat: "7-agent AI mesh running as systemd services, fully local — no cloud calls",
+    verified: true,
+  },
+  {
+    title: "F1 in Schools — Aero Package",
+    tagline: "CFD-driven race car aerodynamics",
+    description:
+      "Aero lead for Macchanu Racing's F1 in Schools car. Ran 23 CFD iterations in ANSYS Fluent on front-wing and body geometry, cutting drag 36% and lifting downforce 17% across the revision cycle.",
+    stack: ["ANSYS Fluent", "CFD", "CAD", "F1 in Schools"],
+    github: "https://github.com/kaorii-ako/macchanu",
+    accentLabel: "Aero",
+    category: "Aero",
+    featured: true,
+    proof: true,
+    proofStat: "23 CFD iterations in ANSYS Fluent — 36% drag reduction, 17% downforce gain",
+    verified: true,
+  },
+  {
+    title: "QBoard",
+    tagline: "Hand-wired 6-key macropad",
+    description:
+      "A custom 6-key macropad built from scratch for Hack Club's Stardance/Hackpad program. Schematic and PCB laid out in KiCad (autorouted with FreeRouting, GND copper zone on B.Cu), running QMK on a Seeed XIAO RP2040. Hot-swap MX switches in a 2×3 matrix, wired across rows D0/D1 and columns D2/D3/D6 to fit the XIAO's 11-pin GPIO budget. 0.91\" I2C OLED, Alps EC11E rotary encoder. Case modeled separately in Fusion 360, bridged from the KiCad board outline via STEP/DXF export.",
+    stack: ["KiCad", "QMK", "XIAO RP2040", "Fusion 360"],
+    github: "https://github.com/kaorii-ako/QBoard",
+    accentLabel: "Hardware",
+    category: "Hardware",
+    featured: true,
+    proof: true,
+    proofStat: "6-key hot-swap matrix, QMK on XIAO RP2040, OLED + rotary encoder — KiCad to Fusion 360",
+    verified: true,
   },
   {
     title: "Chronicly",
@@ -45,18 +94,16 @@ export const projects: Project[] = [
     github: "https://github.com/kaorii-ako/chronicly",
     accentLabel: "Health",
     category: "Health",
-    featured: true,
   },
   {
     title: "Mondo",
     tagline: "AI practice generator",
     description:
-      "Turns any subject into structured practice. Upload notes or a PDF and the AI generates questions across five difficulty levels, grades answers, and gives hints that nudge without giving it away. Wabi-sabi simplicity.",
+      "Turns any subject into structured practice. Upload notes or a PDF and the AI generates questions across five difficulty levels, grades answers, and gives hints that nudge without giving it away.",
     stack: ["AI", "Next.js", "PDF"],
     github: "https://github.com/kaorii-ako/Mondo",
     accentLabel: "Learning",
     category: "Learning",
-    featured: true,
   },
   {
     title: "OpenNexus",
@@ -89,16 +136,6 @@ export const projects: Project[] = [
     category: "Web",
   },
   {
-    title: "AI with Trading",
-    tagline: "ML & genetic neuroevolution trading research",
-    description:
-      "A stock trading research platform that combines LightGBM/XGBoost signal prediction, REINFORCE policy networks, and genetic neuroevolution to analyze and simulate strategies on Thai stock market data.",
-    stack: ["Python", "LightGBM", "Genetic Algorithm", "REINFORCE"],
-    github: "https://github.com/kaorii-ako/AI.with.trading",
-    accentLabel: "AI",
-    category: "AI",
-  },
-  {
     title: "School Life Widget",
     tagline: "Organizer for students",
     description:
@@ -116,6 +153,10 @@ export const categories: ProjectCategory[] = [
   "Mobile",
   "Desktop",
   "Systems",
+  "Hardware",
+  "Aero",
   "Health",
   "Learning",
 ];
+
+export const proofProjects = projects.filter((p) => p.proof);

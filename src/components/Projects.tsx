@@ -9,13 +9,15 @@ function ProjectCard({ project, index }: { project: (typeof projects)[number]; i
   const [hovered, setHovered] = useState(false);
 
   const catColors: Record<string, string> = {
-    AI: "#00e5ff",
-    Web: "#b388ff",
-    Mobile: "#00e676",
-    Desktop: "#ff80ab",
-    Systems: "#00e5ff",
-    Health: "#b388ff",
-    Learning: "#00e676",
+    AI: "var(--accent)",
+    Web: "var(--text-2)",
+    Mobile: "var(--accent-2)",
+    Desktop: "var(--text-2)",
+    Systems: "var(--accent)",
+    Health: "var(--accent-2)",
+    Learning: "var(--text-2)",
+    Hardware: "var(--accent-2)",
+    Aero: "var(--accent)",
   };
 
   return (
