@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-25T07:47:08Z",
+  "title": "Design System: Kao — Engineering Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "signal": { "role": "primary", "displayName": "Signal Teal", "canonical": "#5EEAD4", "tonalRamp": ["#0F2A26", "#164A41", "#1C6A5B", "#2A9884", "#3FBBA3", "#5EEAD4", "#8FF2E1", "#C6F9EE"] },
+      "bg-base": { "role": "neutral", "displayName": "Void", "canonical": "#0A0A0C", "tonalRamp": ["#0A0A0C", "#111114", "#1C1C20", "#232327", "#2E2E34", "#4A4A52", "#75757E", "#9A9AA3"] },
+      "text-1": { "role": "neutral", "displayName": "Bone", "canonical": "#EDEDED", "tonalRamp": ["#616167", "#75757E", "#9A9AA3", "#B4B4BB", "#CFCFD3", "#EDEDED", "#F5F5F6", "#FAFAFA"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero promise and page titles only." },
+      "body": { "displayName": "Body", "purpose": "Paragraph copy, same family as display at regular weight." },
+      "label": { "displayName": "Label / Mono", "purpose": "Eyebrows, nav, tags, stats, timestamps — anything measured." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "ease-ui", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Default UI transition — fast, no overshoot (Linear-style)." },
+      { "name": "ease-section", "value": "cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Scroll-reveal transitions for section content." },
+      { "name": "signal-core-drag", "value": "spring(stiffness: 60, damping: 12)", "purpose": "The one licensed bounce/inertia in the system — hero 3D object only." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Signal-teal fill CTA, e.g. 'See the projects'.",
+      "html": "<a class=\"ds-btn-primary\" href=\"/projects\">See the projects</a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 8px; background: #5EEAD4; color: #0A0A0C; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 500; font-size: 14px; padding: 12px 22px; border-radius: 4px; border: 1px solid #5EEAD4; transition: background 0.2s cubic-bezier(0.16,1,0.3,1), border-color 0.2s; } .ds-btn-primary:hover { background: #34D1B8; border-color: #34D1B8; } .ds-btn-primary:focus-visible { outline: 2px solid #5EEAD4; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action, e.g. 'Email'.",
+      "html": "<a class=\"ds-btn-ghost\" href=\"mailto:you@example.com\">Email</a>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #9A9AA3; font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 500; font-size: 14px; padding: 12px 22px; border-radius: 4px; border: 1px solid #232327; transition: border-color 0.2s, color 0.2s; } .ds-btn-ghost:hover { border-color: #2E2E34; color: #EDEDED; }"
+    },
+    {
+      "name": "Mono Tag",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Stack tag / category label on project cards.",
+      "html": "<span class=\"ds-tag\">Next.js</span>",
+      "css": ".ds-tag { display: inline-block; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: #616167; border: 1px solid #232327; border-radius: 4px; padding: 4px 10px; }"
+    },
+    {
+      "name": "Active Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip-active",
+      "description": "Selected category filter on the projects page.",
+      "html": "<button class=\"ds-tag-active\">AI</button>",
+      "css": ".ds-tag-active { display: inline-block; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; background: #5EEAD4; color: #0A0A0C; border: 1px solid #5EEAD4; border-radius: 999px; padding: 6px 14px; }"
+    },
+    {
+      "name": "Project Card",
+      "kind": "card",
+      "refersTo": "project-card",
+      "description": "Proof-section / projects-grid card with title, tagline, stack tags, and GitHub/live links.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-top\"></div><span class=\"ds-eyebrow\">Flagship</span><h3 class=\"ds-card-title\">Shiori</h3><p class=\"ds-card-tagline\">AI study companion</p></div>",
+      "css": ".ds-card { position: relative; background: #111114; border: 1px solid #232327; border-radius: 8px; padding: 28px; transition: border-color 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s; } .ds-card:hover { border-color: #2E2E34; box-shadow: 0 0 24px rgba(94,234,212,0.14); } .ds-card-top { position: absolute; top: 0; left: 0; height: 1px; width: 100%; background: #5EEAD4; opacity: 0.2; } .ds-eyebrow { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: #616167; } .ds-card-title { font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 600; font-size: 22px; color: #EDEDED; margin-top: 8px; } .ds-card-tagline { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; color: #616167; margin-top: 4px; }"
+    },
+    {
+      "name": "Nav Bar",
+      "kind": "nav",
+      "refersTo": "navbar",
+      "description": "Fixed top navigation, transparent-to-panel on scroll.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link ds-nav-link--active\">Work</a><a class=\"ds-nav-link\">About</a><a class=\"ds-nav-link\">Contact</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 4px; background: rgba(17,17,20,0.85); backdrop-filter: blur(20px); border: 1px solid #232327; border-radius: 14px; padding: 10px 16px; } .ds-nav-link { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: #9A9AA3; padding: 8px 12px; transition: color 0.2s; } .ds-nav-link--active { color: #5EEAD4; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Signal Core",
+    "overview": "The prior site was a warm, editorial single-pager — cream/orange, particle dust, a soft 'personal blog' register. This redesign discards that register entirely: the visitor is admissions committees, hackathon judges, and recruiters who need proof of engineering range in under a minute, not a mood. The system reads as an instrument panel — a precise, dark, low-noise surface where the only saturated thing on screen is the signal it wants you to notice (a stat, a link, the one object you can pick up and turn). Density is restrained: generous vertical rhythm between sections, but tight, confident line spacing within them. Motion is fast and purposeful everywhere except one place — the hero's 3D signal-core — which is the site's single permitted moment of playful, physical, Bruno-Simon-style interactivity. Everywhere else, motion behaves like Linear: short, cubic, no bounce.",
+    "keyCharacteristics": [
+      "Near-black ground with exactly one accent color, spent sparingly (Restrained strategy, not Committed/Drenched)",
+      "Two typefaces total: Space Grotesk (display + body) and JetBrains Mono (labels, data, tags, stats)",
+      "Flat by default — depth from layered near-black panels and hairline borders, never drop shadows",
+      "One signature 3D interaction (draggable signal-core); everything else is 2D and fast",
+      "Proof-first content: every claim sits next to a repo link, a stat, or a stack tag — never a bare adjective"
+    ],
+    "rules": [
+      { "name": "The One Signal Rule", "body": "Signal Teal never covers more than a small chip, button, or line at once. If a whole panel wants to feel 'active,' lift it with a hairline border and a faint teal glow at the edge — not a teal fill.", "section": "colors" },
+      { "name": "The Two-Voice Rule", "body": "Only two typefaces exist anywhere in the system. If new UI needs a third register, it is expressed with weight, size, or case on one of the existing two — never a third font.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. The only elevation cue on hover/focus is a border-color shift plus, on the signal-core and primary CTAs only, a teal glow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do spend Signal Teal only on things that are interactive, live, or measured (links, active states, stats, the signal-core).",
+      "Do keep every proof claim adjacent to a verifiable link, stat, or stack tag.",
+      "Do use JetBrains Mono for anything that is a label, tag, timestamp, or number; Space Grotesk for everything else.",
+      "Do let the signal-core be the only element with spring/bounce/inertial motion; keep the rest of the site on fast, cubic, no-overshoot transitions.",
+      "Do render QBoard (and any project with no live deployment) as a GitHub-link-only card — never fabricate a 'live' button."
+    ],
+    "donts": [
+      "Don't introduce a second accent color, a gradient background, or a warm/cream tone — this is a Restrained one-accent system on purpose.",
+      "Don't add drop shadows for elevation; use border-lightening and glow only.",
+      "Don't use a third typeface anywhere, including in code snippets or footers.",
+      "Don't invent stats, testimonials, or capabilities not present in PRODUCT.md / the project data.",
+      "Don't let decorative motion (grid, particles, scanlines) exceed ~3-5% opacity or compete with content for attention."
+    ]
+  }
+}
