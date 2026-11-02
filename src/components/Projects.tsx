@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { projects, ProjectCategory, categories } from "@/data/projects";
 import { ExternalLink, Github, Eye, ArrowUpRight, Search, X } from "lucide-react";
@@ -22,7 +23,7 @@ function ProjectCard({ project, index }: { project: (typeof projects)[number]; i
 
   return (
     <motion.div
-      className="group relative cursor-pointer border rounded-lg p-6 sm:p-8 glow-border"
+      className="group relative cursor-pointer border rounded-lg p-6 sm:p-8 "
       style={{
         borderColor: "var(--border)",
         background: "var(--surface)",
@@ -78,6 +79,18 @@ function ProjectCard({ project, index }: { project: (typeof projects)[number]; i
           </div>
         )}
       </AnimatePresence>
+
+      {project.image && (
+        <Image
+          src={project.image}
+          alt={`${project.title} screenshot`}
+          width={1600}
+          height={1000}
+          sizes="(min-width: 768px) 560px, 100vw"
+          className="mb-6 block h-auto w-full rounded-lg border"
+          style={{ borderColor: "var(--border)" }}
+        />
+      )}
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex-1">

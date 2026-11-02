@@ -67,7 +67,6 @@ export default function Skills() {
                   borderColor: activeGroup === i ? "var(--accent)" : "var(--border)",
                   color: activeGroup === i ? "var(--accent)" : "var(--text-2)",
                   background: activeGroup === i ? "var(--accent-soft)" : "transparent",
-                  boxShadow: activeGroup === i ? "0 0 12px var(--accent-glow)" : "none",
                 }}
               >
                 <Icon className="h-3.5 w-3.5" />

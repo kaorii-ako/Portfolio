@@ -88,7 +88,7 @@ export default function About() {
                           <div className="flex flex-col items-center">
                             <div
                               className="h-3 w-3 rounded-full border-2"
-                              style={{ borderColor: "var(--accent)", boxShadow: "0 0 8px var(--accent-glow)" }}
+                              style={{ borderColor: "var(--accent)" }}
                             />
                             {i < timeline.length - 1 && (
                               <div

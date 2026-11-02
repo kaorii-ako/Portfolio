@@ -35,7 +35,7 @@ export default function CTA({
         >
           <a
             href={href}
-            className="inline-flex items-center gap-2 rounded px-7 py-3.5 text-sm font-medium transition-all duration-300 hover:shadow-[0_0_36px_var(--accent-glow)]"
+            className="inline-flex items-center gap-2 rounded px-7 py-3.5 text-sm font-medium transition-all duration-300"
             style={{ background: "var(--accent)", color: "var(--bg)" }}
           >
             {label}

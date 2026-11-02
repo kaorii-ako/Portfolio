@@ -19,6 +19,8 @@ export type Project = {
   accentLabel: string;
   category: ProjectCategory;
   featured?: boolean;
+  /** Screenshot path under /public, shown as the hero of the project's home section. */
+  image?: string;
   /** Surfaced in the home page "proof" strip, in this priority order. */
   proof?: boolean;
   /** One concrete, checkable stat/fact shown in the proof strip. */
@@ -28,6 +30,19 @@ export type Project = {
 };
 
 export const projects: Project[] = [
+  {
+    title: "Agent Canvas",
+    tagline: "A canvas for coding agents",
+    description:
+      "Linux desktop app (Electron) where Claude Code, Codex, Gemini CLI or a shell each run in a real terminal tile on a pan-and-zoom canvas. Link tiles to hand work from one agent to the next (Plan → Build → Review), with live status from Claude Code hooks.",
+    stack: ["Electron", "TypeScript", "React", "node-pty"],
+    github: "https://github.com/kaorii-ako/agent-canvas",
+    accentLabel: "Desktop",
+    category: "Desktop",
+    featured: true,
+    image: "/projects/agent-canvas.png",
+    verified: true,
+  },
   {
     title: "Shiori",
     tagline: "AI study companion",
@@ -39,8 +54,37 @@ export const projects: Project[] = [
     accentLabel: "Flagship",
     category: "AI",
     featured: true,
+    image: "/projects/shiori.png",
     proof: true,
     proofStat: "Google Classroom sync · Gemini study plans · MCP server for Claude Code",
+    verified: true,
+  },
+  {
+    title: "TermiStock",
+    tagline: "Stock screener for swing traders",
+    description:
+      "Screens 271 listings across 9 markets: theme strength, breadth, gaps, 52-week highs, RS ratings 1–99, trade setups and a position-size calculator, plus a swipeable candle deck.",
+    stack: ["Next.js", "TypeScript", "Lightweight Charts", "Vercel"],
+    github: "https://github.com/kaorii-ako/TermiStock",
+    live: "https://termistock-six.vercel.app",
+    accentLabel: "Web",
+    category: "Web",
+    featured: true,
+    image: "/projects/termistock.png",
+    verified: true,
+  },
+  {
+    title: "GolfPeaks",
+    tagline: "Indoor golf studio site",
+    description:
+      "Bilingual (Thai/English) site for an indoor golf simulator studio with bay booking, pricing and a 3D mountain hero.",
+    stack: ["Next.js", "Three.js", "Tailwind"],
+    github: "https://github.com/kaorii-ako/GolfPeaks",
+    live: "https://golfpeaks.vercel.app",
+    accentLabel: "Web",
+    category: "Web",
+    featured: true,
+    image: "/projects/golfpeaks.png",
     verified: true,
   },
   {

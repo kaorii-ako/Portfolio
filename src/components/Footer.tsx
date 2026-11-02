@@ -10,7 +10,7 @@ export default function Footer() {
     <footer className="relative border-t py-10" style={{ borderColor: "var(--border)" }}>
       <div
         className="absolute left-0 top-0 h-px w-full"
-        style={{ background: "linear-gradient(90deg, transparent, var(--accent), var(--accent-2), transparent)" }}
+        style={{ background: "var(--border)" }}
         aria-hidden
       />
       <div className="container">
