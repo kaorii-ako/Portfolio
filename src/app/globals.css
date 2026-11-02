@@ -13,10 +13,10 @@
   --text-2: #a1a1a6;
   --text-3: #6e6e73;
 
-  /* single accent: Apple link blue */
-  --accent: #2997ff;
-  --accent-h: #5ab0ff;
-  --accent-soft: rgba(41, 151, 255, 0.1);
+  /* single accent: signal teal (DESIGN.md) */
+  --accent: #5EEAD4;
+  --accent-h: #34D1B8;
+  --accent-soft: rgba(94, 234, 212, 0.1);
   --accent-2: var(--accent);
 
   --radius: 6px;
